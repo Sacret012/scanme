@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Подарки за пельмени!</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background:url({{'static/d.jpg'}});">
+  <div class="container">
+    <header>
+      <h1>Активируйте промокод из вашей пачки пельменей!</h1>
+    </header>
+    <main>
+      <div class="user">
+        <p>{{ name }}
+        <a href="/logout" class="logout-button">Выйти</a>
+        </p>
+      </div>
+      <div class="containerMain">
+      <form id="form">
+        <label for="promocode">Промокод:</label>
+        <input type="text" name="promocode" id="promocode">
+        <input type="submit" value="Проверить" class="button">
+      </form>
+      <div id="result"></div>
+    </div>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const promocode = document.getElementById('promocode').value;
+
+      // Преобразовать промокод в JSON
+      const data = JSON.stringify({ promocode });
+
+      // Отправить данные на сервер
+      fetch('/check-promocode', {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Отобразить результат
+        const result = document.getElementById('result');
+        result.textContent = data.message;
+      })
+      .catch(error => {
+        console.error('Ошибка при проверке промокода:', error);
+      });
+    });
+  </script>
+</body>
+</html>
